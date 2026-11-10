@@ -22,12 +22,12 @@ Login Windows → Console opsional → scan lokal → pilih game → Play → la
 
 ## Responsif
 
-Panel informasi kanan disembunyikan pada lebar <1120 px. Library dapat digulir horizontal. Desktop memiliki ukuran minimum; Console dimaksimalkan. Shell dihasilkan dari ukuran jendela sehingga sudut dan notch bukan gambar bitmap yang ditarik.
+Panel informasi kanan disembunyikan pada lebar <1120 px. Library dapat digulir horizontal. Desktop memiliki ukuran minimum; Console menggunakan seluruh monitor dengan artwork sebagai latar, kartu landscape dan tab pill mengikuti referensi kedua. Shell dihasilkan dari ukuran jendela sehingga sudut dan notch bukan gambar bitmap yang ditarik.
 
 ## Akses input
 
-Keyboard, mouse dan XInput. Pilihan library memakai border coral, hover cyan, serta focus ring pada tombol. Aplikasi hanya memproses controller ketika jendelanya aktif. Kontrol penuh tanpa keyboard untuk penambahan file dan pencarian adalah pengembangan berikutnya.
+Keyboard, mouse dan XInput. Pilihan library memakai border coral, hover cyan, serta focus ring pada tombol. Aplikasi hanya memproses controller ketika jendelanya aktif. Versi 0.2 memiliki menu controller, keyboard layar, file browser dan pilihan hasil artwork. Login launcher pihak ketiga dan recovery Windows tetap berada di luar UI aplikasi.
 
 ## Batas visual versi awal
 
-Belum menggunakan acrylic/Mica asli, transisi mode, parallax cover, atau animasi controller. `concept.svg` adalah rancangan komposisi; bukan screenshot runtime. Pemeriksaan tampilan di Windows tetap diperlukan sebelum dinyatakan final.
+Belum menggunakan acrylic/Mica asli, transisi mode, parallax cover, atau animasi controller. `concept.svg` adalah rancangan Desktop/Dock dan `console-concept.svg` rancangan Console terbaru; keduanya bukan screenshot runtime. Pemeriksaan tampilan di Windows tetap diperlukan sebelum dinyatakan final.

@@ -1,4 +1,6 @@
 using System.Text.Json;
+using System.Net;
+using System.Net.Http;
 using GameHub.Core;
 
 int passed = 0;
@@ -40,4 +42,63 @@ try
     try { Discovery.Scan([steam], epic, cancel.Token); throw new Exception("Cancellation ignored"); } catch (OperationCanceledException) { passed++; Console.WriteLine("PASS: scan cancellation"); }
 }
 finally { if (Directory.Exists(root)) Directory.Delete(root, true); }
+var plan = SessionPackage.Plan(Path.GetTempPath(), Path.Combine(Path.GetTempPath(), "session-target"), SessionPackage.Required);
+Check(plan.Count == SessionPackage.Required.Length && plan.All(p => Path.IsPathFullyQualified(p.Destination)), "complete session package has bounded copy plan");
+foreach (string invalid in new[] { "../escape.exe", @"..\escape.exe", "C:/escape.exe", "/escape.exe", "data:stream" })
+{
+    try { SessionPackage.Plan(Path.GetTempPath(), Path.Combine(Path.GetTempPath(), "session-target"), SessionPackage.Required.Append(invalid)); throw new Exception("Unsafe path accepted"); }
+    catch (IOException) { }
+}
+Check(true, "session package rejects traversal, absolute paths and alternate data streams");
+try { SessionPackage.Plan(Path.GetTempPath(), Path.Combine(Path.GetTempPath(), "session-target"), ["GameHub.exe"]); throw new Exception("Incomplete package accepted"); }
+catch (IOException) { passed++; Console.WriteLine("PASS: incomplete session package cannot activate shell"); }
+// Network behavior is tested with deterministic HTTP fixtures; no API key required.
+Check(OnlineArtwork.ExactMatch("Hades", [new(1, "Hades II"), new(2, "Hades")])?.AppId == 2, "artwork exact title beats similar sequel");
+Check(OnlineArtwork.ExactMatch("Hades", [new(1, "Hades"), new(2, "HADES")]) is null, "ambiguous artwork needs user choice");
+string artRoot = Path.Combine(Path.GetTempPath(), "gamehub-art-" + Guid.NewGuid().ToString("N"));
+try
+{
+    int calls = 0;
+    using var http = new HttpClient(new FakeHandler(request => {
+        calls++;
+        if (request.RequestUri!.Host == "store.steampowered.com")
+            return new(HttpStatusCode.OK) { Content = new StringContent("{\"items\":[{\"id\":42,\"name\":\"Test Game\"}]}") };
+        if (request.RequestUri.AbsolutePath.Contains("library_")) return new(HttpStatusCode.NotFound);
+        return new(HttpStatusCode.OK) { Content = new ByteArrayContent([255, 216, 255, 224, 0, 0]) };
+    }));
+    var provider = new OnlineArtwork(http, artRoot);
+    var matches = await provider.SearchAsync("Test Game");
+    await provider.SearchAsync("Test Game");
+    Check(matches.Single().AppId == 42 && calls == 1, "online title search and local search cache");
+    var files = await provider.DownloadAsync(42);
+    Check(files.Cover is not null && files.Cover == files.Hero && File.Exists(files.Cover), "missing poster/hero falls back to official header");
+    int before = calls; await provider.DownloadAsync(42);
+    Check(calls - before == 2, "cached header is reused; unavailable poster and hero retried");
+    using var invalid = new HttpClient(new FakeHandler(_ => new(HttpStatusCode.OK) { Content = new StringContent("<html>error</html>") }));
+    var invalidProvider = new OnlineArtwork(invalid, Path.Combine(artRoot, "invalid"));
+    var invalidFiles = await invalidProvider.DownloadAsync(99);
+    Check(invalidFiles.Cover is null && invalidFiles.Hero is null, "HTML response is never cached as artwork");
+    using var huge = new HttpClient(new FakeHandler(_ => {
+        var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("x") };
+        response.Content.Headers.ContentLength = 50 * 1024 * 1024;
+        return response;
+    }));
+    try { await new OnlineArtwork(huge, Path.Combine(artRoot,"huge")).DownloadAsync(44); throw new Exception("Oversized image accepted"); }
+    catch (IOException) { passed++; Console.WriteLine("PASS: bounded artwork download"); }
+    if (args.Contains("--online-smoke"))
+    {
+        using var real = new HttpClient { Timeout = TimeSpan.FromSeconds(20) };
+        var online = new OnlineArtwork(real, Path.Combine(artRoot, "real"));
+        var results = await online.SearchAsync("Hades");
+        Check(OnlineArtwork.ExactMatch("Hades", results)?.AppId == 1145360, "live Steam title lookup");
+        var images = await online.DownloadAsync(1145360);
+        Check(File.Exists(images.Cover) && File.Exists(images.Hero), "live official Steam artwork download");
+    }
+}
+finally { if (Directory.Exists(artRoot)) Directory.Delete(artRoot, true); }
 Console.WriteLine($"All {passed} checks passed.");
+
+sealed class FakeHandler(Func<HttpRequestMessage, HttpResponseMessage> respond) : HttpMessageHandler
+{
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) => Task.FromResult(respond(request));
+}

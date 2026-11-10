@@ -9,9 +9,21 @@
 ## Hasil awal lingkungan pengembangan
 
 - SDK .NET 10.0.403, build Release: **0 warning, 0 error**.
-- **11 pemeriksaan regresi lulus** di Linux.
+- **11 pemeriksaan regresi versi 0.1 lulus** di Linux; versi 0.2 menambah pemeriksaan provider artwork dan validasi paket shell.
+- Versi 0.2: 21 checks deterministik lulus; 2 smoke checks tambahan berhasil terhadap pencarian judul dan CDN Steam (total 23 dengan `--online-smoke`).
 - Kompilasi WPF dilakukan dengan Windows targeting pack; UI Windows belum dijalankan di lingkungan Linux.
 - Hasil workflow Windows tersedia di tab Actions repository.
+
+## Tambahan 0.2 — wajib diuji manual
+
+- [ ] Fullscreen dan layout landscape sesuai referensi pada 720p/1080p/4K.
+- [ ] Semua menu, keyboard layar, file browser dan artwork bisa dipakai hanya dengan controller.
+- [ ] Internet putus tetap memakai cover cache dan library bisa dimainkan.
+- [ ] CustomShell pada akun Windows Pro terpisah; login, guardian, exit dan restore.
+- [ ] Simulasikan executable UI gagal: setelah tiga kegagalan, Explorer pulih.
+- [ ] Pemulihan melalui Task Manager dan skrip restore.
+- [ ] Windows Home menolak custom shell, startup biasa tetap berfungsi.
+- [ ] Game keluar mengaktifkan kembali hub jika proses berhasil dilacak.
 
 ## Manual pada Windows — belum ditandai lulus
 

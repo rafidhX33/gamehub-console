@@ -35,12 +35,12 @@ public sealed class ControllerService : IDisposable
         if (state.Pad.LY > 16000) buttons |= 1;
         if (state.Pad.LY < -16000) buttons |= 2;
         ushort pressed = (ushort)(buttons & ~previous);
-        foreach (var pair in new (ushort Mask, string Action)[] { (0x1000,"Play"),(0x2000,"Desktop"),(0x4000,"Favorite"),(0x8000,"Mode"),(0x0100,"PreviousTab"),(0x0200,"NextTab"),(0x0010,"Console") })
+        foreach (var pair in new (ushort Mask, string Action)[] { (0x1000,"Play"),(0x2000,"Back"),(0x4000,"Favorite"),(0x8000,"Search"),(0x0100,"PreviousTab"),(0x0200,"NextTab"),(0x0010,"Menu"),(0x0020,"Details") })
             if ((pressed & pair.Mask) != 0) Input?.Invoke(pair.Action);
         long now = Environment.TickCount64;
         if ((buttons & 15) != 0 && ((pressed & 15) != 0 || now - lastMove >= 220))
         {
-            Input?.Invoke((buttons & (4 | 1)) != 0 ? "Previous" : "Next");
+            Input?.Invoke((buttons & 1) != 0 ? "Up" : (buttons & 2) != 0 ? "Down" : (buttons & 4) != 0 ? "Left" : "Right");
             lastMove = now;
         }
         previous = buttons;

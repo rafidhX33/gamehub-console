@@ -10,7 +10,15 @@
 - [x] Build portable Windows melalui GitHub Actions.
 - [ ] Validasi visual dan controller pada laptop pengguna.
 
-## 0.2 — Pengalaman konsol
+## 0.2 — Pengalaman konsol (diimplementasikan, validasi hardware tertunda)
+
+- [x] Fullscreen monitor, latar artwork dan library landscape.
+- [x] Menu sistem, keyboard layar, file browser dan pilihan cover lewat controller.
+- [x] Pencarian judul dan unduhan artwork online, cache offline.
+- [x] Custom user shell opt-in, guardian dan restore Windows.
+- [x] Pelacakan proses game dasar untuk kembali ke hub.
+
+## Berikutnya
 
 - [ ] Fullscreen borderless pada monitor pilihan, termasuk multi-monitor.
 - [ ] Animasi mode dan perpindahan cover yang menjaga frame time.
@@ -27,4 +35,4 @@
 - [ ] Dukungan controller tambahan / Windows.Gaming.Input.
 - [ ] Uji aksesibilitas, monitor/DPI dan konsumsi daya laptop.
 
-Tidak ada penggantian shell Explorer otomatis dalam roadmap awal.
+Penggantian Explorer bersifat opt-in dan per-user. Tidak diaktifkan otomatis saat aplikasi dibuka.

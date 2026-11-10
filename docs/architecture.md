@@ -16,4 +16,6 @@ Metadata rilis resmi yang dibaca 10 November 2026 mencantumkan .NET 10.0.14 seba
 
 Sumber: https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json dan https://builds.dotnet.microsoft.com/dotnet/release-metadata/10.0/releases.json.
 
+Versi 0.2 menambah `GameHub.Session` (guardian), service artwork HTTP bounded dengan cache, overlay controller, keyboard layar dan file browser. Kebijakan CustomShell ditulis hanya setelah konfirmasi pengguna; tidak diterapkan di cloud atau lewat CI.
+
 Tidak ada paket NuGet pihak ketiga pada versi ini. Pembaruan patch SDK dilakukan melalui global.json dan workflow yang membaca file tersebut.

@@ -10,6 +10,7 @@ public sealed record GameEntry
     public string? WorkingDirectory { get; init; }
     public string? CoverPath { get; init; }
     public string? HeroPath { get; init; }
+    public int? ArtworkAppId { get; init; }
     public bool IsFavorite { get; init; }
     public DateTimeOffset? LastPlayed { get; init; }
     public string SourceLabel => Source.ToUpperInvariant();
@@ -21,7 +22,8 @@ public sealed record LibraryState
 {
     public int Version { get; init; } = 1;
     public List<GameEntry> Games { get; init; } = [];
-    public string Mode { get; init; } = "Desktop";
+    public string Mode { get; init; } = "Console";
+    public bool OnlineArtworkEnabled { get; init; } = true;
     public bool Topmost { get; init; }
 }
 
@@ -33,7 +35,7 @@ public static class LibraryMerge
         var found = discovered.Concat(old.Values.Where(g => keepMissing || g.Source == "Manual"))
             .DistinctBy(g => g.Id);
         return found.Select(g => old.TryGetValue(g.Id, out var saved)
-            ? g with { IsFavorite = saved.IsFavorite, LastPlayed = saved.LastPlayed, CoverPath = File.Exists(saved.CoverPath) ? saved.CoverPath : g.CoverPath, HeroPath = File.Exists(saved.HeroPath) ? saved.HeroPath : g.HeroPath }
+            ? g with { ArtworkAppId = saved.ArtworkAppId, IsFavorite = saved.IsFavorite, LastPlayed = saved.LastPlayed, CoverPath = File.Exists(saved.CoverPath) ? saved.CoverPath : g.CoverPath, HeroPath = File.Exists(saved.HeroPath) ? saved.HeroPath : g.HeroPath }
             : g).OrderBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ToList();
     }
 }
