@@ -1,0 +1,32 @@
+name: Windows build
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-dotnet@v6.1.0
+        with:
+          global-json-file: global.json
+      - name: Build C# and WPF
+        run: dotnet build GameHub.sln -c Release
+      - name: Core regression checks
+        run: dotnet run --project tests/GameHub.Checks -c Release --no-build
+      - name: Publish portable Windows x64
+        run: dotnet publish src/GameHub.App -c Release -r win-x64 --self-contained true -o artifacts/GameHub-win-x64
+      - name: Include usage guide
+        shell: pwsh
+        run: Copy-Item README.md artifacts/GameHub-win-x64/README.md
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: GameHub-win-x64
+          path: artifacts/GameHub-win-x64/
+          if-no-files-found: error
+          retention-days: 14
