@@ -22,8 +22,8 @@
 
 - [ ] Fullscreen borderless pada monitor pilihan, termasuk multi-monitor.
 - [ ] Animasi mode dan perpindahan cover yang menjaga frame time.
-- [ ] Fokus kembali ke launcher setelah game selesai.
-- [ ] Gamepad-only settings dan on-screen keyboard.
+- [ ] Return-to-hub yang lebih andal untuk anti-cheat, Epic dan shortcut manual.
+- [ ] Perluas dukungan controller native di luar XInput.
 - [ ] Import shortcut Start Menu/Desktop dengan konfirmasi hasil.
 - [ ] Artwork cache Steam baru, provider metadata opsional.
 - [ ] Posisi/ukuran tersimpan, tray, rename dan per-game settings.
